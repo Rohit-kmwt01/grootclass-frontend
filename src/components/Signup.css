@@ -1,0 +1,12 @@
+.signup, .login{
+        width: 40%;
+    margin: auto;
+    background: aliceblue;
+    border-radius: 10px
+}
+input {
+    border: 2px solid rgb(45, 45, 45);
+}
+input:focus{
+    border: none;
+}
