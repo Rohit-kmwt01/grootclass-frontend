@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 function Signup() {
     let [signupdata, setsignup] = useState([])
@@ -8,7 +10,52 @@ function Signup() {
             {...signupdata,[e.target.name]:e.target.value}
         )
     }
-    console.log(signupdata)
+    let go = useNavigate()
+
+    // allusers =======================================
+
+    let [already,setalready] = useState([])
+
+    console.log(already)
+
+    useEffect(()=>{
+      allusers()
+    },[])
+
+    let allusers=()=>{
+      axios.get("http://localhost:5000/allusers").then((res)=>{
+        // console.log(res.data.status)
+        if(res.data.status){
+          setalready(res.data.ourusers)
+        }
+      }).catch((err)=>{
+        console.log(err)
+      })
+    }
+   
+    let signupbtn = ()=>{
+
+      let filterdata = already.filter((item)=> item.email==signupdata.email)
+      let exitsdata = filterdata[0]
+      // console.log(exitsdata)
+      if(exitsdata){
+        alert("Already signup")
+      }
+      else{
+         axios.post("http://localhost:5000/signup", {signupdata}).then((res)=>{
+        // console.log(res.data.status)
+        if(res.data.status){
+          alert(res.data.msg)
+          go("/")
+        }
+      }).catch((err)=>{
+        console.log(err)
+      })
+      }
+
+     
+    }
+
   return (
     <>
      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 signup">
@@ -24,18 +71,18 @@ function Signup() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form action="#" method="POST" className="space-y-6">
+          <div  className="space-y-6">
             <div>
-              <label htmlFor="Username" className="block text-sm/6 font-medium text-gray-900">
+              <label htmlFor="username" className="block text-sm/6 font-medium text-gray-900">
                 Username
               </label>
               <div className="mt-2">
                 <input onChange={inputvalue}
-                  id="Username"
-                  name="Username"
+                  id="username"
+                  name="username"
                   type="text"
                   required
-                  autoComplete="Username"
+                  autoComplete="username"
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                 />
               </div>
@@ -81,13 +128,13 @@ function Signup() {
 
             <div>
               <button
-                type="submit"
+                onClick={signupbtn}
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Sign up
               </button>
             </div>
-          </form>
+          </div>
 
           {/* <p className="mt-10 text-center text-sm/6 text-gray-500">
             Not a member?{' '}
